@@ -1,0 +1,8 @@
+grpcio==1.66.1
+protobuf==5.27.3
+pyjwt==2.9.0
+jsonschema==4.23.0
+redis==5.0.8
+prometheus-client==0.20.0
+# dev/build
+grpcio-tools==1.66.1

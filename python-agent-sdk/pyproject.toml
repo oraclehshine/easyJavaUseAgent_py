@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "easy-java-agent-sdk"
+version = "0.1.0"
+description = "Python SDK adapter for Java AgentBridge Maven plugin"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "grpcio>=1.66.1",
+  "protobuf>=5.27.3"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["easy_java_agent_sdk*"]

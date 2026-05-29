@@ -1,0 +1,105 @@
+﻿syntax = "proto3";
+
+package agentbridge.v1;
+
+option java_multiple_files = true;
+option java_package = "com.example.agentbridge.grpc.proto";
+option java_outer_classname = "AgentBridgeProto";
+
+service AgentBridgeService {
+  rpc ProbeAgent (ProbeRequest) returns (ProbeResponse);
+  rpc ListCapabilities (ListCapabilitiesRequest) returns (ListCapabilitiesResponse);
+  rpc Invoke (InvokeRequest) returns (InvokeResponse);
+  rpc InvokeStream (InvokeRequest) returns (stream InvokeChunk);
+  rpc SubmitTask (SubmitTaskRequest) returns (SubmitTaskResponse);
+  rpc GetTaskStatus (GetTaskStatusRequest) returns (GetTaskStatusResponse);
+}
+
+message ProbeRequest {
+  map<string, string> headers = 1;
+}
+
+message Capability {
+  string name = 1;
+  string version = 2;
+  string description = 3;
+  string input_schema_json = 4;
+  string output_schema_json = 5;
+  bool supports_streaming = 6;
+}
+
+message ProbeResponse {
+  string agent_name = 1;
+  string agent_version = 2;
+  string auth_mode = 3;
+  repeated Capability capabilities = 4;
+}
+
+message ListCapabilitiesRequest {
+  map<string, string> headers = 1;
+}
+
+message ListCapabilitiesResponse {
+  repeated Capability capabilities = 1;
+}
+
+message InvokeRequest {
+  string request_id = 1;
+  string trace_id = 2;
+  string user_id = 3;
+  string task_type = 4;
+  string idempotency_key = 5;
+  string payload_json = 6;
+  map<string, string> headers = 7;
+}
+
+message InvokeResponse {
+  string request_id = 1;
+  string status = 2;
+  string result_json = 3;
+  string error_code = 4;
+  string error_message = 5;
+  int64 latency_ms = 6;
+}
+
+message InvokeChunk {
+  string request_id = 1;
+  string chunk_json = 2;
+  bool done = 3;
+  string error_code = 4;
+  string error_message = 5;
+}
+
+enum TaskStatus {
+  TASK_STATUS_UNSPECIFIED = 0;
+  TASK_STATUS_PENDING = 1;
+  TASK_STATUS_RUNNING = 2;
+  TASK_STATUS_SUCCEEDED = 3;
+  TASK_STATUS_FAILED = 4;
+  TASK_STATUS_CANCELLED = 5;
+}
+
+message SubmitTaskRequest {
+  InvokeRequest invoke_request = 1;
+}
+
+message SubmitTaskResponse {
+  string task_id = 1;
+  string request_id = 2;
+  TaskStatus status = 3;
+}
+
+message GetTaskStatusRequest {
+  string task_id = 1;
+}
+
+message GetTaskStatusResponse {
+  string task_id = 1;
+  string request_id = 2;
+  TaskStatus status = 3;
+  string result_json = 4;
+  string error_code = 5;
+  string error_message = 6;
+  int64 created_at_epoch_ms = 7;
+  int64 updated_at_epoch_ms = 8;
+}
